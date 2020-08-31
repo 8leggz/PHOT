@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import shutil, os, glob, send2trash
-from pathlib import Path
 
 print("""                                                                       
 ========================
@@ -19,9 +18,8 @@ print("""
 def find_photos(sd_card_name):
     # There are two cameras, each one makes a different directory
     # Copy files from here
-    if sd_card_name == "EL MC1":
-        return f"/Volumes/{sd_card_name}/DCIM/100EOS5D"
-    elif sd_card_name == "EL MC2":
+    rebel_sd = ["EL MC1", "EL MC2"]
+    if sd_card_name in rebel_sd:
         return f"/Volumes/{sd_card_name}/DCIM/100EOS5D"
     else:
         return f"/Volumes/{sd_card_name}/DCIM/100CANON"
@@ -48,13 +46,14 @@ def client_directory(client_name):
 def photo_shoot(date_of_shoot):
     cwd = os.getcwd()
     os.mkdir(date_of_shoot)
+    os.chdir(f"{cwd}/{date_of_shoot}")
+    shoot_directory = os.getcwd()
     print(f"Ok, a new folder labeled {date_of_shoot} was created under {client_name}.")
-    return os.chdir(f"{cwd}/{date_of_shoot}")
+    return shoot_directory
 
 
 def copy_file(copy_images):
     cwd = os.getcwd()
-    photo_shoot_directory = photo_shoot(date_of_shoot)
     sd_dir = find_photos(sd_card_name)
     if copy_images == "Y":
         print("Copying files...")
@@ -64,10 +63,10 @@ def copy_file(copy_images):
                 shutil.copy2(file, cwd)
     else:
         print("Ok, bye!")
-    #original_imgs = sum([len(files) for r, d, files in os.walk(sd_dir)])
-    #copied_imgs = sum([len(files) for r, d, files in os.walk(photo_shoot_directory)])
-    #print(f"Images found: {original_imgs}")
-    #print(f"Images copied: {copied_imgs}")
+    original_imgs = sum([len(files) for r, d, files in os.walk(sd_dir)])
+    copied_imgs = sum([len(files) for r, d, files in os.walk(cwd)])
+    print(f"Images found: {original_imgs}")
+    print(f"Images copied: {copied_imgs}")
     print("Done")
     print(" ")
 
